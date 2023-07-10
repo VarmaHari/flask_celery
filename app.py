@@ -24,8 +24,8 @@ def send_email(recipient, subject, message):
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
 
-    sender=os.environ.get(sender)
-    password=os.environ.get(password)
+    sender=os.environ.get("sender")
+    password=os.environ.get("password")
 
     msg = MIMEMultipart()
     msg['From'] = sender
@@ -43,7 +43,7 @@ def send_email(recipient, subject, message):
 
 @app.route('/send')
 def schedule_email_task():
-    recipient = 'hariom@simprosys.com'
+    recipient = os.environ.get("sender")
     subject = 'Hello'
     message = 'This is a test email.'
 
