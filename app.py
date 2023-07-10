@@ -1,5 +1,7 @@
 from flask import Flask
 from celery import Celery
+import os
+
 
 app = Flask(__name__)
 
@@ -19,8 +21,8 @@ def send_email(recipient, subject, message):
     from email.mime.text import MIMEText
     from email.mime.multipart import MIMEMultipart
 
-    sender = 'hariom@simprosys.com'
-    password = 'Varma@123'
+    sender=os.environ.get(sender)
+    password=os.environ.get(password)
 
     msg = MIMEMultipart()
     msg['From'] = sender
