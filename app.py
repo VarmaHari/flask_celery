@@ -1,6 +1,7 @@
 from flask import Flask
 from celery import Celery
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,11 +11,23 @@ app = Flask(__name__)
 
 # Configure Celery
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['result_backend'] = 'redis://localhost:6379/0'
 
 # Create Celery instance
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
+
+# Create Celery beat scheduler
+CELERYBEAT_SCHEDULE = {
+    'add-every-30-seconds': {
+        'task': 'app.send_email',
+        'schedule': timedelta(seconds=30),
+        'args': ('hariom@simprosys.com', 'Hello', 'This is a test email.'),
+    },
+}
+
+# Update Celery configuration with the schedule
+celery.conf.beat_schedule = CELERYBEAT_SCHEDULE 
 
 @celery.task
 def send_email(recipient, subject, message):
